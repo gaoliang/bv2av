@@ -5,6 +5,11 @@
         <v-img :src="require('../assets/bilibili.png')" class="my-3" contain height="100" />
       </v-col>
 
+
+      <v-col class="mb-5" cols="12">
+        <h2>bilibili BV to AV converter</h2>
+      </v-col>
+
       <v-col class="mb-5" cols="12">
         <div>
           <v-form ref="form" v-model="valid">
