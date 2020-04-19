@@ -1,58 +1,69 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
-  </div>
+  <v-container>
+    <v-row class="text-center">
+      <v-col cols="12">
+        <v-img :src="require('../assets/bilibili.png')" class="my-3" contain height="100" />
+      </v-col>
+
+      <v-col class="mb-5" cols="12">
+        <div>
+          <v-form ref="form" v-model="valid">
+            <v-row justify="center">
+              <v-col cols="12" md="4">
+                <v-text-field label="BV" :rules="rules" hide-details="auto" v-model="bv"></v-text-field>
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field label="AV" v-model="av" append-icon="open-in-new"></v-text-field>
+              </v-col>
+            </v-row>
+          </v-form>
+        </div>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
-  }
-}
-</script>
+// from https://www.zhihu.com/question/381784377/answer/1099438784
+const map = [..."fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF"];
+const s = [11, 10, 3, 8, 4, 6];
+const xor = 177451812;
+const add = 8728348608;
+const pattern = /[Bb][Vv][fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF]{10}/;
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-</style>
+const bv2av = bv => {
+  if (!bv) {
+    return "";
+  }
+  let result = 0;
+  let i = 0;
+  while (i < 6) {
+    result += map.indexOf(bv[s[i]]) * 58 ** i;
+    i += 1;
+  }
+  return `av${(result - add) ^ xor}`;
+};
+
+export default {
+  name: "HelloWorld",
+
+  data: () => ({
+    valid: false,
+    bv: "",
+    rules: [
+      value => !!value || "？？？",
+      value => {
+        return pattern.test(value) || "不太合适吧";
+      }
+    ]
+  }),
+  computed: {
+    av: function() {
+      if (!this.valid) {
+        return "";
+      }
+      return bv2av(this.bv);
+    }
+  }
+};
+</script>
